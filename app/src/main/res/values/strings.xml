@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">微谷直播号</string>
+    <string name="wxdl">微信授权登录</string>
+    <string name="liveroom_person_state">在线</string>
+    <string name="login_authority">登录代表你遵守《微谷条约》</string>
+    <string name="live_time">直播时长</string>
+    <string name="live_person_amount">直播在线人数</string>
+    <string name="live_over">直播已结束</string>
+
+    <!--CameraActivity.java-->
+    <string name="c_pushStream_start">正在开始直播！</string>
+    <string name="c_pushStream_stop">暂停直播！</string>
+    <string name="c_pushStream_connect">连接中..</string>
+    <string name="c_camera_permission">请开启摄像头.麦克风硬件使用权限</string>
+    <string name="c_streamUrl_error">您的流地址不对，请输入正确的地址！</string>
+    <string name="c_cameraSwitch_resolution">抱歉！当前分辨率下不支持切换摄像头！</string>
+    <string name="c_flashlightSwitch">抱歉！前置摄像头不支持开启闪光灯！</string>
+    <string name="c_backPressed">直播过程中不能返回,请先停止直播！</string>
+    <string name="c_member_pushStreamTime">您此次推流的时间已到，请重新进入开始推流！</string>
+    <string name="c_member_count_error">记次失败，请重新进入开始推流</string>
+    <string name="c_member_overdue">您的会员已过期，请重新充值会员！</string>
+    <string name="c_member_shortage">您的号外棒不足，请充值！</string>
+
+    <!--WebActivity.java-->
+    <string name="w_tip">已经是首页啦！</string>
+    <string name="w_shareTip">该页面不支持分享，请点击话题介绍进入分享!</string>
+    <string name="w_exit_app">再按一次退出应用</string>
+
+
+    <!--微信登录 -->
+    <string name="errcode_success">发送成功</string>
+    <string name="errcode_cancel">发送取消</string>
+    <string name="errcode_deny">发送被拒绝</string>
+    <string name="errcode_unknown">发送返回</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+</resources>

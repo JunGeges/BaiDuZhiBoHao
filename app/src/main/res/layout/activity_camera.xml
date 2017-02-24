@@ -112,13 +112,13 @@
                 android:background="@drawable/comment"
                 />
 
-            <Button
+<!--            <Button
                 android:id="@+id/btn_effect"
                 android:layout_width="40.0dip"
                 android:layout_height="40.0dip"
                 android:layout_marginLeft="20dp"
                 android:background="@drawable/no_beautiful"
-                />
+                />-->
 
             <Button
                 android:id="@+id/btn_flash"
@@ -145,7 +145,14 @@
         android:visibility="invisible"
         android:text="微谷直播" />
 
-
+    <TextView
+        android:id="@+id/tv_band_width"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_logo"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        />
 
     <RelativeLayout
         android:layout_width="40dp"

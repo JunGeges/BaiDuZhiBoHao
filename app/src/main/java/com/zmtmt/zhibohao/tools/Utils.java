@@ -75,36 +75,41 @@ public class Utils {
     //网络请求返回json  GET
     @Nullable //表示定义的字段可以为空
     public static String get(String url) {
+        BufferedReader bufferedReader=null;
         try {
             URL urls = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) urls.openConnection();
-            //设置请求时间
             connection.setConnectTimeout(5000);
-            //设置请求方法
             connection.setRequestMethod("GET");
-            //获得流
             InputStream is = connection.getInputStream();
             if (connection.getResponseCode() == 200) {
-                //字节转换为字符流
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                bufferedReader = new BufferedReader(new InputStreamReader(is));
                 String str;
                 StringBuffer sb = new StringBuffer();
-                while ((str = br.readLine()) != null) {
+                while ((str = bufferedReader.readLine()) != null) {
                     sb.append(str);
                 }
                 connection.disconnect();
                 is.close();
-                br.close();
                 return sb.toString();
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            try {
+                if (bufferedReader!=null){
+                    bufferedReader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
     //网络请求 POST
     public static String post(String url, Map<String, String> params) {
+        BufferedReader bufferedReader = null;
         try {
             URL urls = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) urls.openConnection();
@@ -128,7 +133,7 @@ public class Utils {
                 os.close();
             }
             if (conn.getResponseCode() == 200) {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuffer sb = new StringBuffer();
                 String response;
                 while ((response = bufferedReader.readLine()) != null) {
@@ -141,6 +146,14 @@ public class Utils {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if(bufferedReader!=null){
+                    bufferedReader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
@@ -253,19 +266,13 @@ public class Utils {
         return null;
     }
 
-    public static void saveToSp(Context context, String... values) {
-        SharedPreferences sp = context.getSharedPreferences("WXUserParams", Context.MODE_PRIVATE);
+    public static void saveToSp(Context context,String paramName,String[] keys,String... values){
+        SharedPreferences sp=context.getSharedPreferences(paramName,context.MODE_PRIVATE);
         SharedPreferences.Editor edit = sp.edit();
-        edit.putString("WXLogoUrl", values[0]);
-        edit.putString("WXNickName", values[1]);
-        edit.commit();
-    }
-
-    public static void saveToSp(Context context, String value) {
-        SharedPreferences sp = context.getSharedPreferences("unionId", Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = sp.edit();
-        edit.putString("unionId", value);
-        edit.commit();
+        for (int i=0;i<keys.length;i++){
+            edit.putString(keys[i],values[i]);
+        }
+        edit.apply();
     }
 
     public static void saveToSp(Context context, String key, boolean isFirst) {

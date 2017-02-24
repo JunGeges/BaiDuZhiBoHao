@@ -82,7 +82,7 @@ public class NetWorkType {
     }
 
     /**
-     * 获取网络状态，wifi,wap,2g,3g.
+     * 获取网络状态，wifi,wap,2g,3g或者3g以上.
      *
      * @param context 上下文
      * @return int 网络状态 {@link #NETWORKTYPE_2G},{@link #NETWORKTYPE_3G},

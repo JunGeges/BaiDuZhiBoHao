@@ -43,6 +43,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.baidu.recorder.api.LiveConfig;
 import com.baidu.recorder.api.LiveSession;
 import com.baidu.recorder.api.LiveSessionHW;
 import com.baidu.recorder.api.LiveSessionSW;
@@ -53,6 +54,7 @@ import com.zmtmt.zhibohao.entity.CommentContent;
 import com.zmtmt.zhibohao.entity.Products;
 import com.zmtmt.zhibohao.entity.ShareInfo;
 import com.zmtmt.zhibohao.tools.CommentAdapter;
+import com.zmtmt.zhibohao.tools.NetWorkType;
 import com.zmtmt.zhibohao.tools.ProductsAdapter;
 import com.zmtmt.zhibohao.tools.Utils;
 
@@ -60,6 +62,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,6 +130,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
     private TextView mtv_time_s, mtv_time_m, mtv_time_h;//时间文本
     private TextView mTv_logo;
     private TextView mTv_watch_person;
+    private TextView mTv_band_width;
     private Thread mThread;
     private int time_s = 0;
     int time_m = 0;
@@ -159,7 +163,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
     private SurfaceView mCameraView;
     private Button swtBtn;//前后摄像头切换按钮
     private Button flashBtn;//闪光灯切换按钮
-    private Button effectBtn;//美颜效果
+//    private Button effectBtn;//美颜效果
     private Button mRecorderButton;//录制按钮
     private Button shareBtn; //分享按钮
     private ProgressBar mLoadingAnimation;
@@ -218,6 +222,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
 
         //设置分辨率
         setResolutionConfig(getResolution());
+        Utils.showToast(this, getResolution());
         getData();
         initUIElements();//初始化组件元素
         mCurrentCamera = Camera.CameraInfo.CAMERA_FACING_BACK;
@@ -225,6 +230,10 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
         initStateListener();//直播准备开始的监听事件
         initRTMPSession(mCameraView.getHolder());//初始化推流配置参数等
         initGuideView();//初始化引导view
+        int netWorkType = NetWorkType.getNetWorkType(this);
+        if (netWorkType == NetWorkType.NETWORKTYPE_WIFI) {
+            Utils.showToast(this, "当前的网络为wifi");
+        }
     }
 
     /*获取上一个Activity带过来的相关参数*/
@@ -234,7 +243,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
         eventUrl = intent.getStringExtra("eventurl");
         openID = intent.getStringExtra("openid");
         memberlevelid = Integer.parseInt(intent.getStringExtra("memberlevelid"));
-        Logger.t(TAG).d(eventUrl + "liveconsumeajax");
+        Logger.t(TAG).d(eventUrl + "liveconsumeajax" + pushurl);
         pList = intent.getParcelableArrayListExtra("products_list");
         mShareInfo = intent.getParcelableExtra("shareinfo");
         Logger.t(TAG).d(mShareInfo);
@@ -267,7 +276,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
         this.swtBtn = ((Button) findViewById(R.id.btn_switch_camera));
         this.menuBtn = ((Button) findViewById(R.id.btn_menu));
         flashBtn = (Button) findViewById(R.id.btn_flash);
-        effectBtn = (Button) findViewById(R.id.btn_effect);
+//        effectBtn = (Button) findViewById(R.id.btn_effect);
         shareBtn = (Button) findViewById(R.id.btn_share);
 
         mtv_time_s = (TextView) findViewById(R.id.tv_time_second);
@@ -288,7 +297,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
         this.mRecorderButton.setOnClickListener(this);
         this.menuBtn.setOnClickListener(this);
         flashBtn.setOnClickListener(this);
-        effectBtn.setOnClickListener(this);
+//        effectBtn.setOnClickListener(this);
         shareBtn.setOnClickListener(this);
         iv_time_switch = (ImageView) findViewById(R.id.iv_time_switch);
 
@@ -297,6 +306,8 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
 
         //logo设置区域
         mTv_logo = (TextView) findViewById(R.id.tv_logo);
+
+        mTv_band_width=(TextView)findViewById(R.id.tv_band_width);
 
         //微信登录后存的用户信息
         SharedPreferences sp = getSharedPreferences("WXUserParams", MODE_PRIVATE);
@@ -336,7 +347,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
                 //聚焦内部控件
                 pop_comment.setFocusable(true);
                 //设置pop背景
-                pop_comment.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#45FFFFFF")));
+                pop_comment.setBackgroundDrawable(new ColorDrawable());
                 //设置弹窗进入的动画
                 pop_comment.setAnimationStyle(R.style.AnimationFade);
                 mListView = (ListView) pop_talk_view.findViewById(R.id.lv_pop_comment);
@@ -400,10 +411,10 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
                 toggleFlash(CameraActivity.this);
                 break;
 
-            case R.id.btn_effect:
+/*            case R.id.btn_effect:
                 //美颜
                 onClickSwitchBeautyEffect();
-                break;
+                break;*/
 
             case R.id.btn_share:
                 showSharePop();
@@ -419,6 +430,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
         }
     }
 
+
     @Override
     protected void onResume() {
         Logger.t(TAG).d("onResume");
@@ -429,6 +441,11 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
             Utils.showToast(this, getString(R.string.c_camera_permission));
         }
         blockScreenOrientation(getOrientation());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     //检查权限设置是否都有  但是不知道有没有判断权限是否被拒绝
@@ -479,12 +496,12 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
         pop_products.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         pop_products.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
         pop_products.setFocusable(true);
-        pop_products.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#45ffffff")));
+        pop_products.setBackgroundDrawable(new ColorDrawable());
         pop_products.setOutsideTouchable(true);
         pop_products.setAnimationStyle(R.style.AnimationFade);
         pop_products_listview = (ListView) pop_products_layout.findViewById(R.id.lv_pop_products);
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String,String>();
         params.put("liveid", mShareInfo.getLiveId());
         params.put("op", "goods");
 
@@ -656,8 +673,6 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
                 int num = personFormat / 10000;
                 int num2 = personFormat / 1000 % 10;
                 int num3 = personFormat / 100 % 10;
-                int num4 = personFormat / 10 % 10;
-                int num5 = personFormat % 10;
                 person = num + "." + num2 + num3 + "万";
             }
             mTv_watch_person.setText(person);
@@ -872,7 +887,6 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
         editor.putString(KEY_RESOLUTION, resolutionVal);
         editor.putString(KEY_ORIENTATION, orientationVal);
         editor.apply();
-
         setResolutionConfig(resolutionVal);
     }
 
@@ -908,11 +922,11 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
     }
 
     //美颜效果开启
-    private void onClickSwitchBeautyEffect() {
+/*    private void onClickSwitchBeautyEffect() {
         hasBueatyEffect = !hasBueatyEffect;
         mLiveSession.enableDefaultBeautyEffect(hasBueatyEffect);
         effectBtn.setBackgroundResource(hasBueatyEffect ? R.drawable.beautiful : R.drawable.no_beautiful);
-    }
+    }*/
 
     /**
      * 向服务器获取评论的方法
@@ -932,7 +946,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
 
     private void initRTMPSession(SurfaceHolder sh) {
         Logger.t(TAG).d(getOrientation());
-/*        int orientation = getOrientation().equals("portrait") ? LiveConfig.ORIENTATION_PORTRAIT : LiveConfig.ORIENTATION_LANDSCAPE;//  2  1
+        int orientation = getOrientation().equals("portrait") ? LiveConfig.ORIENTATION_PORTRAIT : LiveConfig.ORIENTATION_LANDSCAPE;//  2  1
         LiveConfig liveConfig = new LiveConfig.Builder()
                 .setCameraId(LiveConfig.CAMERA_FACING_BACK) // 选择摄像头为后置摄像头
                 .setCameraOrientation(orientation) //设置摄像头
@@ -953,11 +967,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
             mLiveSession = new LiveSessionHW(this, liveConfig);
         } else {
             mLiveSession = new LiveSessionSW(this, liveConfig);
-        }*/
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-            mLiveSession = new LiveSessionHW(this, getVideoWidth(), getVideoHeight(), getFrameRate(), getBitrate(), mCurrentCamera);
-        else
-            mLiveSession = new LiveSessionSW(this, getVideoWidth(), getVideoHeight(), getFrameRate(), getBitrate(), mCurrentCamera);
+        }
         mLiveSession.setStateListener(mStateListener);
         mLiveSession.bindPreviewDisplay(sh);
         mLiveSession.prepareSessionAsync();
@@ -1127,6 +1137,10 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
                         break;
                     case UI_EVENT_GET_COMMENT:
                         new CommentAsyncTask().execute(eventUrl);
+                        BigDecimal bd=new BigDecimal(mLiveSession.getCurrentUploadBandwidthKbps());
+                        double upBandWidth = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                        mTv_band_width.setText(upBandWidth+"kb/s");
+                        mTv_band_width.setTextColor(upBandWidth<100? Color.RED:Color.WHITE);
                         break;
 
                     case UI_EVENT_RECORD_TIME:
@@ -1300,12 +1314,12 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
                 //记次成功
                 case 200:
                     isCount = true;
-                    Logger.t(TAG).d("记次成功");
+                    Logger.t(TAG).d(getString(R.string.count_ok));
                     break;
 
                 //号外棒不足
                 case 300:
-                    Logger.t(TAG).d("号外棒不足");
+                    Logger.t(TAG).d(getString(R.string.insufficient));
                     Message msg_300 = Message.obtain();
                     msg_300.arg1 = 14;
                     msg_300.what = UI_EVENT_RECORDER_STOPPED;
@@ -1314,7 +1328,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
 
                 //会员过期
                 case 301:
-                    Logger.t(TAG).d("会员过期");
+                    Logger.t(TAG).d(getString(R.string.members_expired));
                     Message msg_301 = Message.obtain();
                     msg_301.arg1 = 15;
                     msg_301.what = UI_EVENT_RECORDER_STOPPED;
@@ -1323,12 +1337,12 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
 
                 //非法操作
                 case 400:
-                    Logger.t(TAG).d("非法操作");
+                    Logger.t(TAG).d(getString(R.string.illegal_operation));
                     break;
 
                 //记次失败
                 case 500:
-                    Logger.t(TAG).d("记次失败");
+                    Logger.t(TAG).d(getString(R.string.count_error));
                     isCount = false;
                     break;
             }
@@ -1470,7 +1484,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
                 }
                 break;
             //ERROR_CODE_OF_WEAK_CONNECTION_ERROR  ERROR_CODE_OF_WEAK_CONNECTION
-            case SessionStateListener.ERROR_CODE_OF_WEAK_CONNECTION:
+            case SessionStateListener.ERROR_CODE_OF_WEAK_CONNECTION_ERROR:
                 Logger.t(TAG).i("Weak connection...");
                 msg.obj = "当前网络不稳定，请检查网络信号！";
                 mWeakConnectionHintCount++;
@@ -1483,7 +1497,7 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
                 }
                 break;
             //ERROR_CODE_OF_LOCAL_NETWORK_ERROR ERROR_CODE_OF_CONNECTION_TIMEOUT
-            case SessionStateListener.ERROR_CODE_OF_CONNECTION_TIMEOUT:
+            case SessionStateListener.ERROR_CODE_OF_LOCAL_NETWORK_ERROR:
                 Logger.t(TAG).i("Timeout when streaming...");
                 msg.obj = "本地网络错误，请检查当前网络是否畅通！我们正在努力重连...";
                 if (mUIEventHandler != null) {
@@ -1619,20 +1633,5 @@ public class CameraActivity extends FragmentActivity implements View.OnClickList
             break;
         }
     }
-
-    private int getVideoWidth() {
-        return mVideoWidth;
-    }
-
-    private int getVideoHeight() {
-        return mVideoHeight;
-    }
-
-    private int getFrameRate() {
-        return mFrameRate;
-    }
-
-    private int getBitrate() {
-        return mBitrate;
-    }
 }
+

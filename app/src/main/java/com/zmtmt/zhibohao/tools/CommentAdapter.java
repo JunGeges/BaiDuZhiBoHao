@@ -2,6 +2,7 @@ package com.zmtmt.zhibohao.tools;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -44,11 +45,11 @@ public class CommentAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int postion, View view, ViewGroup viewGroup) {
+    public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHolder vh;
         if (view == null) {
             vh = new ViewHolder();
-            view = View.inflate(context, R.layout.item_comment_layout, null);
+            view=LayoutInflater.from(context).inflate(R.layout.item_comment_layout,viewGroup,false);
             vh.iv_pop_comment_head = (ImageView) view.findViewById(R.id.iv_pop_comment_head);
             vh.tv_pop_comment_nickName = (TextView) view.findViewById(R.id.tv_pop_comment_nickName);
             vh.tv_pop_comment_content = (TextView) view.findViewById(R.id.tv_pop_comment_content);
@@ -57,8 +58,8 @@ public class CommentAdapter extends BaseAdapter {
             vh = (ViewHolder) view.getTag();
         }
         //获取评论对象
-        Comment comment = cList.get(postion);
-        vh.tv_pop_comment_content.setTag(postion);
+        Comment comment = cList.get(position);
+        vh.tv_pop_comment_content.setTag(position);
         CommentContent comment_content = comment.getComment_content();//获取评论内容对象
         if (comment.getCommenttype().equals("1")) {
             vh.iv_pop_comment_head.setVisibility(View.VISIBLE);
@@ -67,24 +68,24 @@ public class CommentAdapter extends BaseAdapter {
             vh.iv_pop_comment_head.setTag(comment.getComment_head_url());
             utils.showImageFromAsyncTask(vh.iv_pop_comment_head, comment.getComment_head_url(), context);//设置评论人的Img
             vh.tv_pop_comment_nickName.setText(comment.getComment_nick_name() + ":");//设置评论人的昵称
-            vh.tv_pop_comment_nickName.setTextColor(Color.parseColor("#C5B26D"));
+            vh.tv_pop_comment_nickName.setTextColor(Color.WHITE);
             vh.tv_pop_comment_content.setText(comment_content.getCommentContent());
             vh.tv_pop_comment_content.setTextColor(Color.WHITE);
         } else if (comment.getCommenttype().equals("2")) {
             vh.iv_pop_comment_head.setVisibility(View.GONE);
             vh.tv_pop_comment_nickName.setVisibility(View.GONE);
-            vh.tv_pop_comment_content.setText("系统提示:推荐成功!您推荐的商品为:" + comment_content.getName());
-            vh.tv_pop_comment_content.setTextColor(Color.parseColor("#C5B26D"));
+            vh.tv_pop_comment_content.setText("推荐成功!您推荐的商品为:" + comment_content.getName());
+            vh.tv_pop_comment_content.setTextColor(Color.WHITE);
         } else if (comment.getCommenttype().equals("3")) {
             vh.iv_pop_comment_head.setVisibility(View.GONE);
             vh.tv_pop_comment_nickName.setVisibility(View.GONE);
-            vh.tv_pop_comment_content.setText("系统提示:" + comment.getComment_nick_name() + "送给主播一个" + comment_content.getName());
-            vh.tv_pop_comment_content.setTextColor(Color.parseColor("#C5B26D"));
-        } else if(comment.getCommenttype().equals("4")){
+            vh.tv_pop_comment_content.setText(comment.getComment_nick_name() + "给主播打赏了一个" + comment_content.getName());
+            vh.tv_pop_comment_content.setTextColor(Color.WHITE);
+        } else if (comment.getCommenttype().equals("4")) {
             vh.iv_pop_comment_head.setVisibility(View.GONE);
             vh.tv_pop_comment_nickName.setVisibility(View.GONE);
-            vh.tv_pop_comment_content.setText("系统提示:" + comment.getComment_nick_name() + "购买了主播的" + comment_content.getName());
-            vh.tv_pop_comment_content.setTextColor(Color.parseColor("#C5B26D"));
+            vh.tv_pop_comment_content.setText(comment.getComment_nick_name() + "购买了主播的" + comment_content.getName());
+            vh.tv_pop_comment_content.setTextColor(Color.WHITE);
         }
         return view;
     }

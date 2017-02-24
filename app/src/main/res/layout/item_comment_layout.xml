@@ -15,7 +15,6 @@
         android:id="@+id/tv_pop_comment_nickName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#fff"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="5dp"
         />
@@ -24,8 +23,8 @@
         android:id="@+id/tv_pop_comment_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#fff"
         android:maxLines="3"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        />
 </LinearLayout>

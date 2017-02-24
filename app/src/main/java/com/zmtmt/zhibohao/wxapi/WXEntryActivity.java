@@ -79,19 +79,19 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                         SendAuth.Resp aures = (SendAuth.Resp) baseResp;
                         //获取code
                         String code = aures.code;
-                        Logger.t(TAG).d("onResp"+code);
+                        Logger.t(TAG).d("onResp" + code);
                         //请求获取UserInfo
                         getAccessToken(code);
                         Intent in = new Intent(WXEntryActivity.this, WebActivity.class);
                         in.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(in);
-                        finish();
                         overridePendingTransition(0, 0);
+                        finish();
                     }
                 }
 
                 if (type == WXSHARE) {
-                    Utils.showToast(this,"分享成功");
+                    Utils.showToast(this, "分享成功");
                 }
 
                 break;
@@ -104,7 +104,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 }
 
                 if (type == WXSHARE) {
-                    Utils.showToast(this,"分享已取消");
+                    Utils.showToast(this, "分享已取消");
                 }
                 break;
 
@@ -115,7 +115,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
             default:
                 result = R.string.errcode_unknown;
-            break;
+                break;
         }
     }
 
@@ -141,22 +141,21 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 super.run();
                 String json = Utils.get(url);
                 try {
-                    WxAccessToken tokens = new WxAccessToken();
-                    JSONObject object = new JSONObject(json);
-                    tokens.setAccess_token(object.getString("access_token"));
-                    tokens.setExpires_in(object.getString("expires_in"));
-                    tokens.setRefresh_token(object.getString("refresh_token"));
-                    tokens.setOpenId(object.getString("openid"));
-                    tokens.setScope(object.getString("scope"));
-                    tokens.setUnionId(object.getString("unionid"));
-                    //获取用户信息
-                    User userInfo = getUserInfo(tokens);
-
-                    //保存用户logo的url地址 和昵称
-                    Utils.saveToSp(WXEntryActivity.this, new String[]{userInfo.getHeadImgUrl(), userInfo.getNickName()});
-                    Logger.t(TAG).d("AccessToken"+tokens);
-                    //存unionid
-                    Utils.saveToSp(WXEntryActivity.this, userInfo.getUnionid());
+                        WxAccessToken tokens = new WxAccessToken();
+                        JSONObject object = new JSONObject(json);
+                        tokens.setAccess_token(object.getString("access_token"));
+                        tokens.setExpires_in(object.getString("expires_in"));
+                        tokens.setRefresh_token(object.getString("refresh_token"));
+                        tokens.setOpenId(object.getString("openid"));
+                        tokens.setScope(object.getString("scope"));
+                        tokens.setUnionId(object.getString("unionid"));
+                        //获取用户信息
+                        User userInfo = getUserInfo(tokens);
+                        //保存用户logo的url地址 和昵称
+                        Utils.saveToSp(WXEntryActivity.this,"WXUserParams",new String[]{"WXLogoUrl","WXNickName"}, new String[]{userInfo.getHeadImgUrl(), userInfo.getNickName()});
+                        Logger.t(TAG).d("AccessToken" + tokens);
+                        //存unionid
+                        Utils.saveToSp(WXEntryActivity.this, "unionId",new String[]{"unionId"},userInfo.getUnionid());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -192,7 +191,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 }
                 u.setPrivilege(privilege);
                 u.setUnionid(object.getString("unionid"));
-                Logger.t(TAG).d("UserInfo"+u);
+                Logger.t(TAG).d("UserInfo" + u);
                 return u;
             } catch (JSONException e) {
                 e.printStackTrace();

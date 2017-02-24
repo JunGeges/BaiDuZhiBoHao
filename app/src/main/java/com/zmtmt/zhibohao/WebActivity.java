@@ -111,7 +111,12 @@ public class WebActivity extends AppCompatActivity implements View.OnClickListen
         initViews();
     }
 
-/*    //TODO  新加功能
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    /*    //TODO  新加功能
     public void startAudioLive(View view) {
         Intent intent = new Intent(this, AudioActivity.class);
         startActivity(intent);
@@ -174,6 +179,7 @@ public class WebActivity extends AppCompatActivity implements View.OnClickListen
         });
         mWebView.loadUrl(URL);
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -184,7 +190,7 @@ public class WebActivity extends AppCompatActivity implements View.OnClickListen
                 break;
 
             case R.id.rl_back:
-                if (mWebView.canGoBack()) {
+                if (mWebView.canGoBack() && !mWebView.getUrl().contains("i=4")) {
                     mWebView.goBack();
                 } else {
                     Utils.showToast(WebActivity.this, getString(R.string.w_tip));
@@ -212,6 +218,7 @@ public class WebActivity extends AppCompatActivity implements View.OnClickListen
                 break;
         }
     }
+
     public void showPopupWindow() {
         //当分享窗口弹出的时候设置主窗口的背景为50%的透明度，窗口消失的时候恢复
         params = WebActivity.this.getWindow().getAttributes();
@@ -372,11 +379,11 @@ public class WebActivity extends AppCompatActivity implements View.OnClickListen
                                 break;
                             case 1:
                                 saveImageToGallery(WebActivity.this);
-                                Utils.showToast(WebActivity.this,"成功保存到图库");
+                                Utils.showToast(WebActivity.this, "成功保存到图库");
                                 closeDialog();
                                 break;
                             case 2:
-                                Utils.showToast(WebActivity.this,"已收藏");
+                                Utils.showToast(WebActivity.this, "已收藏");
                                 closeDialog();
                                 break;
                         }
@@ -462,15 +469,15 @@ public class WebActivity extends AppCompatActivity implements View.OnClickListen
          */
         @JavascriptInterface
         public void openCamera(String s) {
-            Intent in = new Intent(WebActivity.this, CameraActivity.class);
-            in.putExtra("pushurl", lri.getPushUrl());
-            in.putExtra("eventurl", lri.getEventUrl());
-            in.putExtra("openid", lri.getOpenId());
-            in.putExtra("memberlevelid", lri.getMemberlevelid());
-            in.putParcelableArrayListExtra("products_list", pList);
-            shareInfo.setLiveId(s);
-            in.putExtra("shareinfo", shareInfo);
-            startActivity(in);
+                Intent in = new Intent(WebActivity.this, CameraActivity.class);
+                in.putExtra("pushurl", lri.getPushUrl());
+                in.putExtra("eventurl", lri.getEventUrl());
+                in.putExtra("openid", lri.getOpenId());
+                in.putExtra("memberlevelid", lri.getMemberlevelid());
+                in.putParcelableArrayListExtra("products_list", pList);
+                shareInfo.setLiveId(s);
+                in.putExtra("shareinfo", shareInfo);
+                startActivity(in);
 //            Logger.t(TAG).d(shareInfo);
         }
 

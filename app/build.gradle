@@ -18,12 +18,12 @@ android {
             keyAlias "zhibohao"
             keyPassword "zhibohao"
         }
-/*        debug {
+        debug {
             storeFile file("zhibohao.jks")
             storePassword "zhibohao"
             keyAlias "zhibohao"
             keyPassword "zhibohao"
-        }*/
+        }
     }
     buildTypes {
 

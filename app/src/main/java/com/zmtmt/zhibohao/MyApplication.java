@@ -32,7 +32,7 @@ public class MyApplication extends Application {
     }
 
     private void initLogger() {
-        Logger.init(TAG).logLevel(LogLevel.NONE);
+        Logger.init(TAG).logLevel(LogLevel.FULL);
     }
 
     private boolean isWXAppInstalledAndSupported() {

@@ -37,11 +37,6 @@
         <item name="android:windowExitAnimation">@anim/out_toptobottom</item>
     </style>
 
-    <style name="GuideFade">
-        <item name="android:windowEnterAnimation">@anim/fade_in</item>
-        <item name="android:windowExitAnimation">@anim/fade_out</item>
-    </style>
-
     <style name="CustomDialog" parent="@android:style/Theme.Dialog">
         <!-- 边框 -->
         <item name="android:windowFrame">@null</item>
